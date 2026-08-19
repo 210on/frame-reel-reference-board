@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#11110f" />
+    <meta name="description" content="リールを見渡し、研究し、次の撮影へつなげるプライベートなリファレンスボード" />
+    <title>FRAME — Reel reference board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="FRAME ホーム">
+        <span class="brand-mark">F</span><span>FRAME</span>
+      </a>
+      <div class="header-actions">
+        <button class="icon-button" id="searchToggle" aria-label="検索">⌕</button>
+        <button class="button button-ghost" id="shareButton">共有</button>
+        <button class="button button-primary" id="addButton"><span>＋</span> 追加</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">REEL REFERENCE / 01</p>
+          <h1>いい映像を、<br /><em>つくれる記憶</em>に。</h1>
+        </div>
+        <div class="intro-copy">
+          <p>保存しただけで終わらせない。好きなカット、音、テンポを分解して、次の撮影へつなげるリファレンスボード。</p>
+          <div class="stats"><span><strong id="reelCount">0</strong> references</span><span><strong id="noteCount">0</strong> notes</span></div>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="表示と絞り込み">
+        <div class="filter-scroll" id="filters"></div>
+        <label class="search-box" id="searchBox">
+          <span>⌕</span><input id="searchInput" type="search" placeholder="キーワードで検索" />
+        </label>
+        <select id="sortSelect" aria-label="並び順">
+          <option value="saved">保存順</option>
+          <option value="title">タイトル順</option>
+          <option value="notes">メモあり</option>
+        </select>
+      </section>
+
+      <section class="board-wrap">
+        <div class="board" id="board" aria-live="polite"></div>
+        <div class="scroll-progress"><span id="scrollProgress"></span></div>
+      </section>
+
+      <section class="creator-strip">
+        <div>
+          <p class="eyebrow">CREATOR MODE</p>
+          <h2>見る、分解する、撮る。</h2>
+          <p>自分の動画ファイルなら、速度・フレーム・区間ループを細かく操作できます。</p>
+        </div>
+        <button class="button button-light" id="uploadButton">動画を分析する <span>↗</span></button>
+        <input id="videoInput" type="file" accept="video/*" hidden />
+      </section>
+    </main>
+
+    <dialog class="player-dialog" id="playerDialog">
+      <button class="dialog-close" id="closePlayer" aria-label="閉じる">×</button>
+      <div class="player-grid">
+        <div class="viewer-panel">
+          <div class="video-stage">
+            <video id="video" playsinline preload="metadata"></video>
+            <iframe id="instagramEmbed" class="instagram-embed" title="Instagram reel" loading="lazy" allowfullscreen allow="encrypted-media; picture-in-picture"></iframe>
+            <div class="video-empty" id="videoEmpty">
+              <span class="large-play">▶</span>
+              <p>Instagramでは元の投稿を開きます。<br />精密操作は自分の動画ファイルで利用できます。</p>
+              <a class="button button-light" id="instagramLink" target="_blank" rel="noopener">Instagramで見る ↗</a>
+            </div>
+          </div>
+          <p class="precision-note" id="precisionNote">Instagram公式プレイヤーで表示中。速度・フレーム操作は自分の動画ファイルで利用できます。</p>
+          <div class="transport">
+            <div class="transport-main">
+              <button id="backButton" aria-label="5秒戻る">−5</button>
+              <button class="play-button" id="playButton" aria-label="再生・一時停止">▶</button>
+              <button id="forwardButton" aria-label="5秒進む">+5</button>
+              <span class="timecode"><b id="currentTime">00:00.000</b> / <span id="duration">00:00.000</span></span>
+            </div>
+            <div class="speed-control">
+              <span>速度</span><input id="speed" type="range" min="0.25" max="2" step="0.05" value="1" /><output id="speedValue">1.00×</output>
+            </div>
+          </div>
+          <div class="timeline-wrap">
+            <input class="timeline" id="timeline" type="range" min="0" max="1000" value="0" />
+            <div class="marker-layer" id="markerLayer"></div>
+          </div>
+          <div class="precision-tools">
+            <button id="prevFrame">‹ 1 frame</button><button id="nextFrame">1 frame ›</button>
+            <button id="setIn">IN <kbd>I</kbd></button><button id="setOut">OUT <kbd>O</kbd></button>
+            <button id="loopButton" aria-pressed="false">↻ LOOP</button><button id="addMarker">＋ Marker <kbd>M</kbd></button>
+          </div>
+        </div>
+        <aside class="analysis-panel">
+          <p class="eyebrow">BREAKDOWN</p>
+          <h2 id="analysisTitle">リファレンスを分解</h2>
+          <label>なぜ惹かれた？<textarea id="whyNote" placeholder="例：冒頭0.8秒で完成形を見せている"></textarea></label>
+          <div class="analysis-row"><label>HOOK<input id="hookNote" placeholder="最初のひと言 / 絵" /></label><label>PACING<select id="pacingNote"><option>Slow</option><option selected>Medium</option><option>Fast</option></select></label></div>
+          <label>SHOT LIST<textarea id="shotNote" placeholder="1. ワイド / 店内\n2. 手元 / ドリップ\n3. 商品ヒーロー"></textarea></label>
+          <label>AUDIO / SFX<input id="audioNote" placeholder="湯音 → ビートイン → カップ音" /></label>
+          <div class="tag-picker" id="tagPicker"></div>
+          <button class="button button-primary full" id="saveAnalysis">分析を保存</button>
+        </aside>
+      </div>
+    </dialog>
+
+    <dialog class="add-dialog" id="addDialog">
+      <form method="dialog" id="addForm">
+        <button class="dialog-close" value="cancel" aria-label="閉じる">×</button>
+        <p class="eyebrow">ADD REFERENCE</p>
+        <h2>リールを追加</h2>
+        <label>Instagramの投稿URL<input id="newUrl" type="url" required placeholder="https://www.instagram.com/p/..." /></label>
+        <label>メモ / タイトル<input id="newTitle" placeholder="何が気になった？" /></label>
+        <label>カテゴリ<select id="newCategory"><option>coffee</option><option>cinematic</option><option>tutorial</option><option>sound</option><option>story</option></select></label>
+        <button class="button button-primary full" value="default">ボードに追加</button>
+        <p class="fineprint">動画はコピーせず、元投稿へのリンクとして保存します。</p>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
