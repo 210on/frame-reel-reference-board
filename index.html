@@ -18,6 +18,7 @@
         <span class="brand-mark">F</span><span>FRAME</span>
       </a>
       <div class="header-actions">
+        <span class="sync-status" id="syncStatus">接続中…</span>
         <button class="icon-button" id="searchToggle" aria-label="検索">⌕</button>
         <button class="button button-ghost" id="shareButton">共有</button>
         <button class="button button-primary" id="addButton"><span>＋</span> 追加</button>
@@ -106,6 +107,7 @@
           <div class="analysis-row"><label>HOOK<input id="hookNote" placeholder="最初のひと言 / 絵" /></label><label>PACING<select id="pacingNote"><option>Slow</option><option selected>Medium</option><option>Fast</option></select></label></div>
           <label>SHOT LIST<textarea id="shotNote" placeholder="1. ワイド / 店内\n2. 手元 / ドリップ\n3. 商品ヒーロー"></textarea></label>
           <label>AUDIO / SFX<input id="audioNote" placeholder="湯音 → ビートイン → カップ音" /></label>
+          <label class="visibility-toggle"><input id="noteVisibility" type="checkbox" /><span>分析メモを閲覧者と共有</span></label>
           <div class="tag-picker" id="tagPicker"></div>
           <button class="button button-primary full" id="saveAnalysis">分析を保存</button>
           <button class="delete-reference" id="deleteReference" type="button">このリールを削除</button>
@@ -122,7 +124,7 @@
         <label>メモ / タイトル<input id="newTitle" placeholder="何が気になった？" /></label>
         <label>カテゴリ<select id="newCategory"><option>coffee</option><option>cinematic</option><option>tutorial</option><option>sound</option><option>story</option></select></label>
         <button class="button button-primary full" value="default">ボードに追加</button>
-        <p class="fineprint">動画はコピーせず、元投稿へのリンクとして保存します。</p>
+        <p class="fineprint">共有URLも自動で正規化します。動画はコピーせず、元投稿へのリンクとして保存します。</p>
       </form>
     </dialog>
 
